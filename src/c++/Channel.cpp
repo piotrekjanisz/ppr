@@ -13,7 +13,8 @@
 #include <iostream>
 #include <eq/eq.h>
 #include "ppr.h"
-#include "HdfDataProvider.h"
+#include "data/HdfDataProvider.h"
+#include "data/RandomDataProvider.h"
 
 const int POS_COMPONENT_NUM = 4;
 

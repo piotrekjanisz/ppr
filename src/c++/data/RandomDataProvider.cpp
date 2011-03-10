@@ -6,7 +6,7 @@
  */
 
 #include "RandomDataProvider.h"
-#include "utils.h"
+#include "../utils.h"
 
 RandomDataProvider::RandomDataProvider(int particleNum, int numComponents, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax)
 : _particleNum(particleNum)

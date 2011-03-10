@@ -6,7 +6,6 @@
  */
 
 #include "eq/eq.h"
-#include "GlExtensions.h"
 #include "ShaderProgram.h"
 #include "GL/gl.h"
 #include <fstream>

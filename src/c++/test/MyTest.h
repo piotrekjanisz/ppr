@@ -4,8 +4,14 @@
 #include <iostream>
 #include <string>
 
-#define TEST_SUITE \
+
+/**
+ * Macros that creates void suite() method in class
+ * see SorterTest.h for an example
+ */
+#define TEST_SUITE(name) \
 	void suite() { \
+		std::cout << "----- TEST SUITE: " #name " -----" << std::endl; \
 		int passed_tests = 0; \
 		int failed_tests = 0;
 
@@ -15,6 +21,7 @@
 		std::cout << "number of tests: " << total_tests << std::endl; \
 		std::cout << "PASSED: " << passed_tests << std::endl; \
 		std::cout << "FAILED: " << failed_tests << std::endl; \
+		std::cout << "#######################################################" << std::endl << std::endl; \
 	}
 
 #define TEST(name) \
@@ -33,6 +40,22 @@
 		std::cout << "--------------------" << std::endl; \
 	} 
 
+#define PERFORMANCE_TEST(name) \
+	std::cout << "TEST: " #name ": "; \
+	try { \
+		double time = name(); \
+		std::cout << time << " seconds" << std::endl; \
+		passed_tests++; \
+	} catch (AssertionException& ex) { \
+		std::cout << "FAILED" << std::endl << "\t" << ex.getMessage() << std::endl; \
+		failed_tests++; \
+		std::cout << "--------------------" << std::endl; \
+	} catch (...) { \
+		std::cout << "FAILED" << std::endl << "\t" << "unexpected exception thrown at: " << std::endl; \
+		failed_tests++; \
+		std::cout << "--------------------" << std::endl; \
+	}
+
 #define ASSERT_TRUE(expression) \
 	if (!(expression)) { \
 		throw AssertionException("expression: '" #expression "', expected to be TRUE"); \
@@ -41,6 +64,11 @@
 #define ASSERT_FALSE(expression) \
 	if (expression) { \
 		throw AssertionException("expression: '" #expression "', expected to be FALSE"); \
+	}
+
+#define ASSERT_EQUAL(expression, value) \
+	if ((expression) != (value)) { \
+		throw AssertionException("expression: " #expression "', expected to be equal to: " #value); \
 	}
 
 #define ASSERT_LESS_THAN(expression, value) \
@@ -60,8 +88,19 @@
 		throw AssertionException("statement: '" #statement "', expected not to throw any exception"); \
 	}
 
+#define ASSERT_NOT_NULL(expression) \
+	if ((expression) == 0) { \
+		throw AssertionException("expression: '" #expression "' expected not to be NULL"); \
+	}
+
+#define ASSERT_NULL(expression) \
+	if ((expression) != 0) { \
+		throw AssertionException("expression: '" #expression "' expected to be NULL"); \
+	}
+
 class AssertionException 
 {
+protected:
 	std::string _msg;
 public:
 	AssertionException(const std::string& msg)
@@ -69,4 +108,5 @@ public:
 
 	std::string getMessage() const { return _msg; }
 };
+
 #endif

@@ -9,8 +9,8 @@
 #define	HDFDATAPROVIDER_H
 
 #include "DataProvider.h"
-#include "data/HdfProcessor.h"
-#include "data/Step.h"
+#include "HdfProcessor.h"
+#include "Step.h"
 #include <vector>
 
 class HdfDataProvider : public DataProvider

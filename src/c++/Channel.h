@@ -13,8 +13,8 @@
 #include "CameraFrame.h"
 #include "ShaderProgram.h"
 #include "FrameData.h"
-#include "DataProvider.h"
-#include "RandomDataProvider.h"
+#include "data/DataProvider.h"
+
 
 class Channel : public eq::Channel
 {

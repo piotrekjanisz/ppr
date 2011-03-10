@@ -6,11 +6,14 @@
  */
 
 #include "SorterTest.h"
+#include "KdTreeTest.h"
 
 int main(int argc, char** argv)
 {
-	SorterTest test;
+	SorterTest test1;
+	test1.suite();
 
-	test.suite();
+	KdTreeTest test2;
+	test2.suite();
 	return 0;
 }

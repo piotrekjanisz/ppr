@@ -98,6 +98,15 @@ public:
 	public:
 		virtual ~Iterator() {}
 
+		float* getCoordinatesPointer()
+		{
+			return &(step->getCoordinates()[index * 4]);
+		}
+
+		float* getAdditionalDataPointer(const std::string& name)
+		{
+			return &(step->getAdditionalData()[name][index]);
+		}
 	};
 
 	Iterator begin();

@@ -17,17 +17,11 @@ public:
 
 	void testMedian_3rd_dim();
 
-	TEST_SUITE
+	TEST_SUITE(sorter_test)
 		TEST(testMedian_1st_dim)
 		TEST(testMedian_2nd_dim)
 		TEST(testMedian_3rd_dim)
 	TEST_SUITE_END
-
-private:
-
-	void printArrayOfVectors(const char* title, float* array, int arraySize, int numOfComponents, int componentsToPrint);
-
-	Step* prepareStep(int particleNum); 
 };
 
 #endif
