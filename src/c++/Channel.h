@@ -14,6 +14,7 @@
 #include "ShaderProgram.h"
 #include "FrameData.h"
 #include "data/DataProvider.h"
+#include "ppr.h"
 
 
 class Channel : public eq::Channel
@@ -30,9 +31,14 @@ private:
     const int SPHERE_NUM_SLICES;
 
     GLfloat _modelMatrix[16];
-    GLfloat _projectionMatrix[16];
     GLfloat _modelViewMatrix[16];
 
+    mutable ppr::Matrix4f _projectionMatrix;
+//    mutable ppr::Matrix4f _modelMatrix;
+//    mutable ppr::Matrix4f _modelViewMatrix;
+
+    int _pointLocation;
+    int _pointsBufferId;
     int _vertexLocation;
     int _normalLocation;
     int _colorLocation;
@@ -59,8 +65,6 @@ private:
     double _time;
     double _measureTime;
     eq::base::Clock _clock;
-
-    CameraFrame _cameraFrame;
 
     double _frameNum;
 protected:

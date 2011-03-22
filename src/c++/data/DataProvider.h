@@ -24,6 +24,7 @@ class DataProvider
 {
 public:
     virtual Array<float> getPositions(double frameNum) = 0;
+    virtual int getParticleNum(double frameNum) = 0;
 };
 
 #endif	/* DATAPROVIDER_H */

@@ -24,8 +24,13 @@ HdfDataProvider::HdfDataProvider(const char* hdfFilePath)
 Array<float> HdfDataProvider::getPositions(double frameNum)
 {
     int stepNumber = floor(fmod(frameNum, _steps.size()));
-    cout << stepNumber << endl;
     return Array<float>(_steps[stepNumber]->getCoordinates(), _steps[stepNumber]->getParticlesNumber());
+}
+
+int HdfDataProvider::getParticleNum(double frameNum)
+{
+	int stepNumber = floor(fmod(frameNum, _steps.size()));
+	return _steps[stepNumber]->getParticlesNumber();
 }
 
 HdfDataProvider::~HdfDataProvider() { }

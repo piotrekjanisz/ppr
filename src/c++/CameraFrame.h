@@ -9,6 +9,7 @@
 #define	CAMERAFRAME_H
 
 #include "vmmlib/vmmlib.hpp"
+#include <iostream>
 
 
 /**
@@ -30,7 +31,7 @@ public:
     void translateZ(float value);
 
     vmml::mat4f getTransform() const;
-    
+
 private:
     vmml::vec3d _up;
     vmml::vec3d _forward;

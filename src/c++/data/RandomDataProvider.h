@@ -19,6 +19,7 @@ public:
     virtual ~RandomDataProvider() {}
 
     Array<float> getPositions(double frameNum);
+    virtual int getParticleNum(double frameNum);
 };
 
 #endif	/* RANDOMDATAPROVIDER_H */

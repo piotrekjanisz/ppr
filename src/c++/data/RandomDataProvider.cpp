@@ -28,3 +28,9 @@ Array<float> RandomDataProvider::getPositions(double frameNum)
     return _data;
 }
 
+int RandomDataProvider::getParticleNum(double frameNum)
+{
+	return _particleNum;
+}
+
+

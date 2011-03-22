@@ -8,6 +8,8 @@
 #include "CameraFrame.h"
 #include <iostream>
 
+using namespace std;
+
 CameraFrame::CameraFrame()
 : _up(0, 1, 0), _forward(0, 0, -1), _position(0, 0, 0) { }
 
@@ -87,3 +89,5 @@ vmml::mat4f CameraFrame::getTransform() const
 
     return transform;
 }
+
+
