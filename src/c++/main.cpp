@@ -5,6 +5,7 @@
 #include "Config.h"
 #include "Pipe.h"
 #include "Node.h"
+#include "CommandLineParser.h"
 
 using namespace eq::base;
 using namespace std;
@@ -36,34 +37,33 @@ public:
 
 int main(const int argc, char** argv)
 {
-    // Init GLEW
     glewExperimental = GL_TRUE;
 
-    // 1. Equalizer initialization
     NodeFactory nodeFactory;
     if (!eq::init(argc, argv, &nodeFactory)) {
         EQERROR << "Equalizer init failed" << endl;
         return EXIT_FAILURE;
     }
 
-    // 2. get a configuration
     bool error = false;
     Config* config = static_cast<Config*> (eq::getConfig(argc, argv));
     if (config) {
-        // 3. init config
+
+        const char* hdfFile = CommandLineParser().findArg(argc, argv, "-hdfFile");
+        if (hdfFile) {
+        	cout << "HAVE HDF FILE: " << hdfFile << endl;
+        	config->setHdfFileName(hdfFile);
+        } else {
+        	cout << "HDF FILE NOT SPECIFIED" << endl;
+        	config->setHdfFileName("");
+        }
+
         if (config->init()) {
-            // 4. run main loop
             while (config->isRunning()) {
                 config->startFrame();
                 config->finishFrame();
-                //const eq::ConfigEvent* event = config->nextEvent();
-                //config->handleEvents();
-                //if (event) {
-                //    config->handleEvent(event);
-                //}
             }
 
-            // 5. exit config
             config->exit();
         } else {
             EQERROR << "Config initialization failed: "
@@ -71,14 +71,12 @@ int main(const int argc, char** argv)
             error = true;
         }
 
-        // 6. release config
         eq::releaseConfig(config);
     } else {
         EQERROR << "Cannot get config" << endl;
         error = true;
     }
 
-    // 7. exit
     eq::exit();
     return error ? EXIT_FAILURE : EXIT_SUCCESS;
 }

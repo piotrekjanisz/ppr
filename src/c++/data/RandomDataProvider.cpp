@@ -33,4 +33,9 @@ int RandomDataProvider::getParticleNum(double frameNum)
 	return _particleNum;
 }
 
+Step* RandomDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
+{
+	return 0;
+}
+
 

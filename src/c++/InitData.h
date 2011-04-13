@@ -22,8 +22,12 @@ public:
     uint32_t getFrameDataId() const { return _frameDataId; }
     void setFrameDataId(uint32_t frameDataId) { _frameDataId = frameDataId; }
 
+    std::string getHdfFile() { return _hdfFile; }
+    void setHdfFile(const std::string& hdfFile) { _hdfFile = hdfFile; }
+
 private:
     uint32_t _frameDataId;
+    std::string _hdfFile;
 };
 
 #endif	/* INITDATA_H */

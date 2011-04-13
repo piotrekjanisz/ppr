@@ -9,6 +9,7 @@
 #define	CHANNEL_H
 
 #include <eq/eq.h>
+#include <boost/shared_ptr.hpp>
 #include "glus/Glus.h"
 #include "CameraFrame.h"
 #include "ShaderProgram.h"
@@ -25,9 +26,6 @@ public:
     virtual ~Channel();
 
 private:
-    const int OBJ_NUM;;
-    const int SPHERE_NUM_SLICES;
-
     GLfloat _modelMatrix[16];
     GLfloat _modelViewMatrix[16];
 
@@ -47,7 +45,7 @@ private:
 
     ShaderProgram _shaderProgram;
 
-    DataProvider* _dataProvider;
+    boost::shared_ptr<DataProvider> _dataProvider;
     int _indicesNumber;
 
     float _eyeX;

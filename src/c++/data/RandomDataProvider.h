@@ -20,6 +20,7 @@ public:
 
     Array<float> getPositions(double frameNum);
     virtual int getParticleNum(double frameNum);
+    virtual Step* getStep(double frameNum, double begin, double end, bool additionaData = true);
 };
 
 #endif	/* RANDOMDATAPROVIDER_H */

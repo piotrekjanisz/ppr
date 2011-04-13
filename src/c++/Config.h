@@ -31,6 +31,8 @@ public:
 
     Config(eq::base::RefPtr< eq::Server > parent);
     virtual ~Config();
+
+    void setHdfFileName(const std::string& fileName) { _initData.setHdfFile(fileName); }
 private:
     FrameData _frameData;
     GLFrame _cameraFrame;

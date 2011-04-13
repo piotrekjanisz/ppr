@@ -13,10 +13,11 @@ InitData::~InitData() { }
 
 void InitData::getInstanceData(eq::net::DataOStream& os)
 {
-    os << _frameDataId;
+    os << _frameDataId << _hdfFile;
 }
 
 void InitData::applyInstanceData(eq::net::DataIStream& is)
 {
     is >> _frameDataId;
+    is >> _hdfFile;
 }

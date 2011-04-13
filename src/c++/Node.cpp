@@ -7,6 +7,9 @@
 
 #include "Node.h"
 #include "Config.h"
+#include "data/RandomDataProvider.h"
+#include "data/HdfDataProvider.h"
+#include <boost/make_shared.hpp>
 
 bool Node::configInit(const uint32_t initID)
 {
@@ -19,6 +22,23 @@ bool Node::configInit(const uint32_t initID)
 
     Config* config = static_cast< Config* >( getConfig( ));
     config->mapData( initID );
+
+    InitData initData = config->getInitData();
+
+    const int OBJ_NUM = 100000;
+    const int POS_COMPONENT_NUM = 4;
+    const float X_MIN = -20.0f;
+    const float X_MAX = 20.0f;
+    const float Y_MIN = -20.0f;
+    const float Y_MAX = 20.0f;
+    const float Z_MIN = 1.0f;
+    const float Z_MAX = 40.0f;
+    if (initData.getHdfFile().empty()) {
+    	_dataProvider = boost::make_shared<RandomDataProvider>(OBJ_NUM, POS_COMPONENT_NUM, X_MIN, X_MAX, Y_MIN, Y_MAX, Z_MIN, Z_MAX);
+    } else {
+    	_dataProvider = boost::make_shared<HdfDataProvider>(initData.getHdfFile().c_str());
+    }
+
     return true;
 }
 
