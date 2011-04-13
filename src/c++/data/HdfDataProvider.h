@@ -19,6 +19,7 @@ public:
     HdfDataProvider(const char* hdfFilePath);
     ~HdfDataProvider();
     virtual Array<float> getPositions(double frameNum);
+    virtual Step* getStep(double frameNum, double begin, double end, bool additionaData = true);
     virtual int getParticleNum(double frameNum);
 private:
     HdfProcessor _hdfProcessor;

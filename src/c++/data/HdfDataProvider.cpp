@@ -27,6 +27,12 @@ Array<float> HdfDataProvider::getPositions(double frameNum)
     return Array<float>(_steps[stepNumber]->getCoordinates(), _steps[stepNumber]->getParticlesNumber());
 }
 
+Step* HdfDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
+{
+	return _steps[floor(frameNum)];
+	// TODO
+}
+
 int HdfDataProvider::getParticleNum(double frameNum)
 {
 	int stepNumber = floor(fmod(frameNum, _steps.size()));

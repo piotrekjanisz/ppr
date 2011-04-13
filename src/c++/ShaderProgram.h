@@ -41,6 +41,10 @@ public:
      * Unbinds any bind program
      */
     static void useNone();
+
+    int getAttribLocation(const char* name);
+
+    int getUniformLocation(const char* name);
 private:
     void loadAux(const std::string& vertexSoruce, const std::string& fragmentSource, const std::string& geometrySource) throw(ShaderException);
     int loadShader(const std::string& source, int shaderType) throw(ShaderException);

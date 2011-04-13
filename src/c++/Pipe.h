@@ -11,6 +11,7 @@
 #include <eq/eq.h>
 #include "Config.h"
 #include "FrameData.h"
+#include "data/DataProvider.h"
 
 class Pipe : public eq::Pipe
 {
@@ -22,8 +23,10 @@ public:
     virtual void frameStart( const uint32_t frameID, const uint32_t frameNumber );
 
     const FrameData& getFrameData() const { return _frameData; }
+    const DataProvider* getDataProvider() const { return _dataProvider; }
 private:
     FrameData _frameData;
+    DataProvider* _dataProvider;
 };
 
 #endif	/* PIPE_H */

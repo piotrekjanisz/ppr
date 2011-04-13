@@ -12,13 +12,14 @@
 #include <GL/gl.h>
 #include <iostream>
 #include <eq/eq.h>
+#include <cstring>
 #include "ppr.h"
 #include "data/HdfDataProvider.h"
 #include "data/RandomDataProvider.h"
 
 const int POS_COMPONENT_NUM = 4;
 
-Channel::Channel(eq::Window* parent) : eq::Channel(parent), BATCH_NUM(1000), BATCH_SIZE(1000), OBJ_NUM(BATCH_NUM * BATCH_SIZE), SPHERE_NUM_SLICES(8)
+Channel::Channel(eq::Window* parent) : eq::Channel(parent), OBJ_NUM(10000000), SPHERE_NUM_SLICES(8)
 {
     _frameNum = 0.0;
     _measureTime = 5000.0;
@@ -31,6 +32,15 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent), BATCH_NUM(1000), BAT
     // loading shader program
     try {
         _shaderProgram.load("shaders/Vertex.vs", "shaders/Fragment.fs");
+        // get attributes and uniform locations
+        _vertexLocation = _shaderProgram.getAttribLocation("vertex");
+        _projectionMatrixLocation = _shaderProgram.getUniformLocation("projectionMatrix");
+        _modelViewMatrixLocation = _shaderProgram.getUniformLocation("modelViewMatrix");
+        //_lightDirectionLocation = _shaderProgram.getUniformLocation("lightDirection");
+        //_cameraRotationLocation = _shaderProgram.getUniformLocation("cameraRotation");
+        _lightPositionLocation = _shaderProgram.getUniformLocation("lightPosition");
+        //_cameraPositionLocation = _shaderProgram.getUniformLocation("cameraPosition");
+        //_cameraUpLocation = _shaderProgram.getUniformLocation("cameraUp");
     } catch (const ShaderException& ex) {
         std::cout << ex.getErrorMessage() << std::endl;
         exit(1); // TODO implement better exiting
@@ -52,10 +62,6 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent), BATCH_NUM(1000), BAT
     glGenVertexArrays(1, (GLuint*) & _vao);
     glBindVertexArray(_vao);
 
-    _vertexLocation = glGetAttribLocation(_shaderProgram.getId(), "vertex");
-    _projectionMatrixLocation = glGetUniformLocation(_shaderProgram.getId(), "projectionMatrix");
-    _modelViewMatrixLocation = glGetUniformLocation(_shaderProgram.getId(), "modelViewMatrix");
-
     // initialize VBO for vertex data
     glGenBuffers(1, (GLuint*) & _pointsBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, _pointsBufferId);
@@ -67,9 +73,7 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent), BATCH_NUM(1000), BAT
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClearDepth(1.0f);
-    //glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 }
@@ -81,26 +85,21 @@ void Channel::frameDraw(const uint32_t spin)
     FrameData frameData = getFrameData();
     eq::Channel::frameDraw(spin);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-/*
-    vmml::identity(_modelMatrix);
-    vmml::identity(_modelViewMatrix);
-    _modelMatrix.rotate_x(_xRotation);
-    _modelMatrix.rotate_y(_yRotation);
-    _modelMatrix.set_translation(0.0f, 0.0f, _zTranslation);
-    _modelViewMatrix *= frameData.getCameraTransformation();
-    _modelViewMatrix *= _modelMatrix;
-    glUniformMatrix4fv(_modelViewMatrixLocation, 1, GL_FALSE, _modelViewMatrix.array);
-*/
 
-    Glus::glusLoadIdentityf(_modelMatrix);
     Glus::glusLoadIdentityf(_modelViewMatrix);
-    Glus::glusTranslatef(_modelMatrix, 0.0f, 0.0f, _zTranslation);
-    Glus::glusRotateRzRyRxf(_modelMatrix, _xRotation, _yRotation, 0.0f);
     Glus::glusMultMatrixf(_modelViewMatrix, _modelViewMatrix, frameData.getCameraTransformation().array);
-    Glus::glusMultMatrixf(_modelViewMatrix, _modelViewMatrix, _modelMatrix);
+    Glus::glusMultMatrixf(_modelViewMatrix, _modelViewMatrix, frameData.getModelTransformation().array);
     glUniformMatrix4fv(_modelViewMatrixLocation, 1, GL_FALSE, _modelViewMatrix);
+    //glUniformMatrix4fv(_cameraRotationLocation, 1, GL_FALSE, frameData.getCameraRotation().array);
+    //glUniform4fv(_lightDirectionLocation, 1, frameData.getLightDirection().array);
+    glUniform4fv(_lightPositionLocation, 1, frameData.getLightPosition().array);
+    //glUniform4fv(_cameraPositionLocation, 1, frameData.getCameraPosition().array);
+    //glUniform4fv(_cameraUpLocation, 1, frameData.getCameraUp().array);
+
+    //std::cout << frameData.getLightDirection() << std::endl;
 
     glBindBuffer(GL_ARRAY_BUFFER, _pointsBufferId);
+    glBufferData(GL_ARRAY_BUFFER, _dataProvider->getParticleNum(1.0) * POS_COMPONENT_NUM * sizeof(float), _dataProvider->getPositions(1.0).array, GL_DYNAMIC_DRAW);
     glDrawArrays(GL_POINTS, 0, _dataProvider->getParticleNum(_frameNum));
 
     _frameNum += 0.05;

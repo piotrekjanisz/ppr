@@ -20,27 +20,24 @@ private:
 
 	int getPointsNumber(const H5::Group& group) const;
 	float* readDataSet(const H5::Group & group, const char *dataSetName,
-			const H5::DataSpace & memorySpace, float *buffer) const;
-	void createDataSet(H5::Group & group, const char *dataSetName,
-			const H5::DataSpace & memorySpace, const float *buffer, int pointsNumber);
+			const H5::DataSpace & memorySpace, const H5::DataSpace & fileSpace, float *buffer) const;
 
 	float* readCoordinatesFromDataSet(const H5::Group& group,
-			const char *dataSetName, int pointsNumber, int offset,
+			int pointsNumber, int dimensionNumber, int offset,
 			float *buffer) const;
-	void writeCoordinatesToDataSet(H5::Group& group, const char *dataSetName,
-			int pointsNumber, int offset, const float *buffer);
 
 	float* readAdditionalDataFromDataSet(const H5::Group& group,
-			const char *dataSetName, float* buffer) const;
+			const char *dataSetName, int pointsNumber, int offset, float* buffer) const;
 
 	const char *getStepName(int stepNumber) const;
 	const H5::DataSpace
-			createMemoryDataSpace(int pointsNumber, int offset) const;
+			createMemoryDataSpace(int pointsNumber, int dimensionNumber) const;
+	const H5::DataSpace
+				createFileDataSpace(int pointsNumber, int offset) const;
 	std::map<std::string, float*> readNamesOfAdditionalDatasets(
 			H5::Group& group) const;
 	std::map<std::string, float*> readAdditionalData(H5::Group & group,
-			int pointsNumber) const;
-	void unlinkAllDatasets(H5::Group& group);
+			int pointsNumber, int offset) const;
 
 public:
 
@@ -52,7 +49,9 @@ public:
 	HdfProcessor(const char* fileName, Mode mode = READ_ONLY);
 	virtual ~HdfProcessor();
 	int getStepsNumber() const;
+	int readParticlesNumber(int stepNumber) const;
 	Step* readStep(int stepNumber, bool withAdditionalData = true) const;
+	Step* readStep(int stepNumber, int begin, int end, bool withAdditionalData = true) const;
 	void updateStep(Step& step);
 };
 

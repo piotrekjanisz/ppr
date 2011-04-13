@@ -53,39 +53,28 @@ void CameraFrame::translateZ(float value)
 
 vmml::mat4f CameraFrame::getTransform() const
 {
+    vmml::vec3d zAxis = -_forward;
     vmml::vec3d cross = _up.cross(_forward);
+    vmml::vec3d xAxis = _up.cross(zAxis);
     vmml::mat4f transform = vmml::mat4f::ZERO;
-    vmml::mat4f translation = vmml::mat4f::IDENTITY;
 
-    transform[0][0] = cross.x();
-    transform[1][0] = cross.y();
-    transform[2][0] = cross.z();
+    transform[0][0] = xAxis.x();
+    transform[1][0] = xAxis.y();
+    transform[2][0] = xAxis.z();
 
     transform[0][1] = _up.x();
     transform[1][1] = _up.y();
     transform[2][1] = _up.z();
 
-    transform[0][2] = _forward.x();
-    transform[1][2] = _forward.y();
-    transform[2][2] = _forward.z();
+    transform[0][2] = zAxis.x();
+    transform[1][2] = zAxis.y();
+    transform[2][2] = zAxis.z();
 
-    /*
     transform[0][3] = _position.x();
     transform[1][3] = _position.y();
     transform[2][3] = _position.z();
-    */
+
     transform[3][3] = 1.0f;
-
-    
-    translation[0][3] = _position.x();
-    translation[1][3] = _position.y();
-    translation[2][3] = _position.z();
-
-    //transform *= translation;
-
-    transform *= translation;
-
-    //std::cout << transform << std::endl;
 
     return transform;
 }

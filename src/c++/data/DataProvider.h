@@ -8,6 +8,8 @@
 #ifndef DATAPROVIDER_H
 #define	DATAPROVIDER_H
 
+#include "Step.h"
+
 template <typename T>
 struct Array
 {
@@ -24,6 +26,7 @@ class DataProvider
 {
 public:
     virtual Array<float> getPositions(double frameNum) = 0;
+//    virtual Step* getStep(double frameNum, double begin, double end, bool additionaData = true);
     virtual int getParticleNum(double frameNum) = 0;
 };
 

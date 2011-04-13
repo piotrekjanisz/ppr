@@ -12,6 +12,7 @@
 #include "FrameData.h"
 #include "CameraFrame.h"
 #include "InitData.h"
+#include "GLFrame.h"
 
 class Config : public eq::Config
 {
@@ -32,8 +33,10 @@ public:
     virtual ~Config();
 private:
     FrameData _frameData;
-    CameraFrame _cameraFrame;
+    GLFrame _cameraFrame;
+    vmml::mat4f _modelTransform;
     InitData _initData;
+    float _speed;
     bool handleKeyEvent(const eq::KeyEvent& event);
 };
 

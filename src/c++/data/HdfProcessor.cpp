@@ -43,35 +43,53 @@ int HdfProcessor::getPointsNumber(const Group& group) const {
 }
 
 const DataSpace HdfProcessor::createMemoryDataSpace(int pointsNumber,
-		int offset) const {
+		int dimensionNumber) const {
 	hsize_t dimensions[] = { pointsNumber * (Step::COORDINATES_NUMBER) };
 	DataSpace memorySpace(1, dimensions);
 
 	hsize_t count[] = { pointsNumber };
-	hsize_t start[] = { offset };
+	hsize_t start[] = { dimensionNumber };
 	hsize_t stride[] = { Step::COORDINATES_NUMBER };
 	memorySpace.selectHyperslab(H5S_SELECT_SET, count, start, stride);
 
 	return memorySpace;
 }
 
+const DataSpace HdfProcessor::createFileDataSpace(int pointsNumber, int offset) const {
+	hsize_t dimensions[] = { pointsNumber + offset };
+	hsize_t count[] = { pointsNumber };
+	hsize_t start[] = { offset };
+	hsize_t stride[] = { 1 };
+
+	DataSpace fileSpace(1, dimensions);
+
+	fileSpace.selectHyperslab(H5S_SELECT_SET, count, start, stride);
+
+	return fileSpace;
+}
+
 float* HdfProcessor::readDataSet(const Group & group, const char *dataSetName,
-		const DataSpace & memorySpace, float *buffer) const {
+		const DataSpace & memorySpace, const DataSpace & fileSpace, float *buffer) const {
 	DataSet dataSet = group.openDataSet(dataSetName);
-	dataSet.read(buffer, PredType::NATIVE_FLOAT, memorySpace);
+	dataSet.read(buffer, PredType::NATIVE_FLOAT, memorySpace, fileSpace);
 	dataSet.close();
 	return buffer;
 }
 
-float* HdfProcessor::readCoordinatesFromDataSet(const Group& group,
-		const char *dataSetName, int pointsNumber, int offset, float *buffer) const {
-	DataSpace memorySpace = createMemoryDataSpace(pointsNumber, offset);
-	return readDataSet(group, dataSetName, memorySpace, buffer);
+float* HdfProcessor::readCoordinatesFromDataSet(const Group& group, int pointsNumber, int dimensionNumber, int offset, float *buffer) const {
+	DataSpace memorySpace = createMemoryDataSpace(pointsNumber, dimensionNumber);
+	DataSpace fileSpace = createFileDataSpace(pointsNumber, offset);
+
+	return readDataSet(group, COORDINATES_DATASET_NAMES[dimensionNumber], memorySpace, fileSpace, buffer);
 }
 
 float* HdfProcessor::readAdditionalDataFromDataSet(const H5::Group& group,
-		const char *dataSetName, float* buffer) const {
-	return readDataSet(group, dataSetName, DataSpace::ALL, buffer);
+		const char *dataSetName, int pointsNumber, int offset, float* buffer) const {
+	hsize_t dimensions[] = { pointsNumber };
+	DataSpace memorySpace(1, dimensions);
+	DataSpace fileSpace = createFileDataSpace(pointsNumber, offset);
+
+	return readDataSet(group, dataSetName, memorySpace, fileSpace, buffer);
 }
 
 const char *HdfProcessor::getStepName(int stepNumber) const {
@@ -105,7 +123,7 @@ map<string, float*> HdfProcessor::readNamesOfAdditionalDatasets(Group& group) co
 }
 
 map<string, float*> HdfProcessor::readAdditionalData(Group & group,
-		int pointsNumber) const {
+		int pointsNumber, int offset) const {
 	map<string, float*> additionalData = readNamesOfAdditionalDatasets(group);
 
 	map<string, float*>::iterator begin = additionalData.begin();
@@ -115,7 +133,7 @@ map<string, float*> HdfProcessor::readAdditionalData(Group & group,
 
 		float *data = new float[pointsNumber];
 		begin->second = readAdditionalDataFromDataSet(group,
-				begin->first.c_str(), data);
+				begin->first.c_str(), pointsNumber, offset, data);
 		++begin;
 	}
 
@@ -123,23 +141,41 @@ map<string, float*> HdfProcessor::readAdditionalData(Group & group,
 }
 
 Step* HdfProcessor::readStep(int stepNumber, bool withAdditionalData) const {
+	int particlesNumber = readParticlesNumber(stepNumber);
+
+	return readStep(stepNumber, 0, particlesNumber, withAdditionalData);
+}
+
+int HdfProcessor::readParticlesNumber(int stepNumber) const {
 	const char* stepName = getStepName(stepNumber);
 
 	Group group = _file.openGroup(stepName);
-	int pointsNumber = getPointsNumber(group);
+	int particlesNumber = getPointsNumber(group);
+
+	group.close();
+	delete[] stepName;
+
+	return particlesNumber;
+}
+
+Step *HdfProcessor::readStep(int stepNumber, int begin, int end,
+		bool withAdditionalData) const {
+	const char* stepName = getStepName(stepNumber);
+
+	Group group = _file.openGroup(stepName);
+	int pointsNumber = end - begin;
 
 	float* coordinates = new float[(Step::COORDINATES_NUMBER) * pointsNumber];
 
 	for (int i = 0; i < Step::DIMENSION_NUMBER; i++) {
-		readCoordinatesFromDataSet(group, COORDINATES_DATASET_NAMES[i],
-				pointsNumber, i, coordinates);
+		readCoordinatesFromDataSet(group, pointsNumber, i, begin, coordinates);
 	}
 
 	Step* result = new Step(stepName, pointsNumber, coordinates);
 
 	if (withAdditionalData) {
 		map<string, float*> additionalData = readAdditionalData(group,
-				pointsNumber);
+				pointsNumber, begin);
 		result->setAdditionalData(additionalData);
 	}
 
@@ -148,61 +184,3 @@ Step* HdfProcessor::readStep(int stepNumber, bool withAdditionalData) const {
 
 	return result;
 }
-
-void HdfProcessor::updateStep(Step& step) {
-	Group group = _file.openGroup(step.getName());
-	unlinkAllDatasets(group);
-	for (int i = 0; i < Step::DIMENSION_NUMBER; i++) {
-		writeCoordinatesToDataSet(group, COORDINATES_DATASET_NAMES[i],
-				step.getParticlesNumber(), i, step.getCoordinates());
-	}
-
-	map<string, float*>::iterator begin = step.getAdditionalData().begin();
-	map<string, float*>::iterator end = step.getAdditionalData().end();
-	while (begin != end) {
-		createDataSet(group, begin->first.c_str(), DataSpace::ALL, begin->second,
-				step.getParticlesNumber());
-		++begin;
-	}
-
-	group.close();
-}
-
-herr_t readDatasetName(hid_t groupId, const char* dataSetName, void* data) {
-	vector<string>* datasetNames = (vector<string>*) data;
-	string name = dataSetName;
-	datasetNames->push_back(dataSetName);
-	return 0;
-}
-
-void HdfProcessor::unlinkAllDatasets(Group& group) {
-	vector<string> datasetNames;
-	group.iterateElems(CURRENT_PATH, NULL, readDatasetName, &datasetNames);
-
-	vector<string>::iterator beg = datasetNames.begin();
-	vector<string>::iterator end = datasetNames.end();
-	while (beg != end) {
-		group.unlink(*beg);
-		++beg;
-	}
-}
-
-void HdfProcessor::writeCoordinatesToDataSet(Group& group,
-		const char *dataSetName, int pointsNumber, int offset,
-		const float *buffer) {
-	DataSpace memorySpace = createMemoryDataSpace(pointsNumber, offset);
-	createDataSet(group, dataSetName, memorySpace, buffer, pointsNumber);
-}
-
-void HdfProcessor::createDataSet(Group & group, const char *dataSetName,
-		const DataSpace & memorySpace, const float *buffer, int pointsNumber) {
-	hsize_t dims[1] = { pointsNumber };
-	DataSpace fileSpace(1, dims);
-
-	DataSet dataSet = group.createDataSet(dataSetName, PredType::NATIVE_FLOAT,
-			fileSpace);
-
-	dataSet.write(buffer, PredType::NATIVE_FLOAT, memorySpace, DataSpace::ALL);
-	dataSet.close();
-}
-

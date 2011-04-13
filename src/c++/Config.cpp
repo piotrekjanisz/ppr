@@ -9,13 +9,20 @@
 #include <iostream>
 
 Config::Config(eq::base::RefPtr< eq::Server > parent)
-: eq::Config(parent), _cameraFrame(vmml::vec3d(0, 1, 0), vmml::vec3d(0, 0, 1), vmml::vec3d(0, 0, -1)) { }
+: eq::Config(parent), _modelTransform(vmml::mat4f::IDENTITY), _speed(0.2f) { }
 
 Config::~Config() { }
 
 bool Config::init()
 {
-    _frameData.setCameraTransformation(_cameraFrame.getTransform());
+    M3DMatrix44f transform;
+    _cameraFrame.GetCameraMatrix(transform, false);
+    _frameData.setCameraTransformation(transform);
+    _cameraFrame.GetCameraMatrix(transform, true);
+    _frameData.setCameraRotation(transform);
+    _frameData.setModelTransformation(_modelTransform);
+    _frameData.setLightDirection(vmml::vec4f(-1.0f, -1.0f, -1.0f, 1.0f));
+
     registerObject(&_frameData);
     _frameData.setAutoObsolete(getLatency());
 
@@ -30,7 +37,12 @@ bool Config::init()
 
 uint32_t Config::startFrame()
 {
-    _frameData.setCameraTransformation(_cameraFrame.getTransform());
+    M3DMatrix44f transform;
+    _cameraFrame.GetCameraMatrix(transform, false);
+    _frameData.setCameraTransformation(transform);
+    _cameraFrame.GetCameraMatrix(transform, true);
+    _frameData.setCameraRotation(transform);
+    _frameData.setModelTransformation(_modelTransform);
     const uint32_t version = _frameData.commit();
     return eq::Config::startFrame(version);
 }
@@ -44,9 +56,13 @@ bool Config::handleEvent(const eq::ConfigEvent* event)
             break;
         case eq::Event::POINTER_MOTION:
             if (event->data.pointerMotion.buttons == eq::PTR_BUTTON1) {
-                _cameraFrame.rotateHorizontally(-0.005f * event->data.pointerMotion.dx);
-                _cameraFrame.rotateVertically(-0.005f * event->data.pointerMotion.dy);
+                _cameraFrame.RotateLocalY(-0.005f * event->data.pointerMotion.dx);
+                _cameraFrame.RotateLocalX(-0.005f * event->data.pointerMotion.dy);
                 return true;
+            } else if (event->data.pointerMotion.buttons == eq::PTR_BUTTON3) {
+            	_modelTransform.rotate_y(-0.005f * event->data.pointerMotion.dx);
+            	_modelTransform.rotate_x(-0.005f * event->data.pointerMotion.dy);
+            	return true;
             }
             break;
 
@@ -59,19 +75,19 @@ bool Config::handleKeyEvent(const eq::KeyEvent& event)
     switch (event.key) {
         case eq::KC_RIGHT:
         case 'd':
-            _cameraFrame.translateX(0.1f);
+            _cameraFrame.MoveRight(-_speed);
             return true;
         case eq::KC_LEFT:
         case 'a':
-            _cameraFrame.translateX(-0.1f);
+            _cameraFrame.MoveRight(_speed);
             return true;
         case eq::KC_UP:
         case 'w':
-            _cameraFrame.translateForward(0.1f);
+            _cameraFrame.MoveForward(_speed);
             return true;
         case eq::KC_DOWN:
         case 's':
-            _cameraFrame.translateForward(-0.1f);
+            _cameraFrame.MoveForward(-_speed);
             return true;
     }
     return false;

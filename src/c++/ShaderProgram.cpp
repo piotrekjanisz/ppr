@@ -117,3 +117,21 @@ void ShaderProgram::useNone()
 {
     glUseProgram(0);
 }
+
+int ShaderProgram::getAttribLocation(const char* name)
+{
+	int retVal = glGetAttribLocation(_programId, name);
+	if (retVal == -1) {
+		THROW(ShaderException, (string("can't find attrib: ") + string(name)));
+	}
+	return retVal;
+}
+
+int ShaderProgram::getUniformLocation(const char* name)
+{
+	int retVal = glGetUniformLocation(_programId, name);
+	if (retVal == -1) {
+		THROW(ShaderException, (string("can't find uniform: ") + string(name)));
+	}
+	return retVal;
+}

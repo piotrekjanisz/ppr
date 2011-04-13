@@ -25,8 +25,6 @@ public:
     virtual ~Channel();
 
 private:
-    const int BATCH_NUM;
-    const int BATCH_SIZE;
     const int OBJ_NUM;;
     const int SPHERE_NUM_SLICES;
 
@@ -34,17 +32,16 @@ private:
     GLfloat _modelViewMatrix[16];
 
     mutable ppr::Matrix4f _projectionMatrix;
-//    mutable ppr::Matrix4f _modelMatrix;
-//    mutable ppr::Matrix4f _modelViewMatrix;
 
-    int _pointLocation;
     int _pointsBufferId;
     int _vertexLocation;
-    int _normalLocation;
-    int _colorLocation;
+    int _lightDirectionLocation;
+    int _lightPositionLocation;
+    int _cameraRotationLocation;
     int _projectionMatrixLocation;
     int _modelViewMatrixLocation;
-    int _instancesCoordsLocation;
+    int _cameraPositionLocation;
+    int _cameraUpLocation;
     int _vao;
     int _instanceDataUBO;
 

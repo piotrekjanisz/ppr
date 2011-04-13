@@ -25,6 +25,6 @@ void FileSorter::sortFile(const char* fileName) {
 	for (int i = 0; i < stepsNumber; i++) {
 		Step* step = file.readStep(i);
 		sorter.sort(*step);
-		file.updateStep(*step);
+//		file.updateStep(*step);
 	}
 }
