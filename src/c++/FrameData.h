@@ -104,6 +104,10 @@ public:
     	return _cameraTransformation.get_column(1);
     }
 
+    void changePointSize(float val) { _pointSize += val; }
+    void setPointSize(float val) { _pointSize = val; }
+    float getPointSize() { return _pointSize; }
+
 protected:
     virtual void serialize(eq::net::DataOStream& os,
                            const uint64_t dirtyBits);
@@ -123,6 +127,7 @@ private:
     vmml::vec4f _lightDirection;
     vmml::vec4f _lightPosition;
     float _frameNum;
+    float _pointSize;
 };
 
 #endif	/* FRAMEDATA_H */

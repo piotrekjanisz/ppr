@@ -38,6 +38,7 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent)
         _projectionMatrixLocation = _shaderProgram.getUniformLocation("projectionMatrix");
         _modelViewMatrixLocation = _shaderProgram.getUniformLocation("modelViewMatrix");
         _lightPositionLocation = _shaderProgram.getUniformLocation("lightPosition");
+        _pointSizeLocation = _shaderProgram.getUniformLocation("pointSize");
     } catch (const ShaderException& ex) {
         std::cout << ex.getErrorMessage() << std::endl;
         exit(1); // TODO implement better exiting
@@ -80,6 +81,7 @@ void Channel::frameDraw(const uint32_t spin)
     Glus::glusMultMatrixf(_modelViewMatrix, _modelViewMatrix, frameData.getModelTransformation().array);
     glUniformMatrix4fv(_modelViewMatrixLocation, 1, GL_FALSE, _modelViewMatrix);
     glUniform4fv(_lightPositionLocation, 1, frameData.getLightPositionInCameraSpace().array);
+    glUniform1f(_pointSizeLocation, frameData.getPointSize());
 
     boost::shared_ptr<Step> step = _dataProvider->getStep(_frameNum, 0.0, 1.0, true);
     glBindBuffer(GL_ARRAY_BUFFER, _pointsBufferId);

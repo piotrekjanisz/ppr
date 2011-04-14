@@ -15,7 +15,8 @@ using namespace std;
 HdfDataProvider::HdfDataProvider(const char* hdfFilePath)
     : _hdfProcessor(hdfFilePath)
 {
-    _steps.reserve(_hdfProcessor.getStepsNumber());
+	_stepsNumber = _hdfProcessor.getStepsNumber();
+    _steps.reserve(_stepsNumber);
     cout << "STEP NUM: " << _hdfProcessor.getStepsNumber() << endl;
     for (int i = 0; i < _hdfProcessor.getStepsNumber(); i++) {
         _steps.push_back(_hdfProcessor.readStep(i));
@@ -31,6 +32,7 @@ Array<float> HdfDataProvider::getPositions(double frameNum)
 boost::shared_ptr<Step> HdfDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
 {
 	int frameNumInt = floor(frameNum);
+	frameNumInt = frameNumInt % _stepsNumber;
 	int particleNum = _hdfProcessor.readParticlesNumber(frameNumInt);
 	return boost::shared_ptr<Step>(_hdfProcessor.readStep(frameNumInt, floor(particleNum * begin), floor(particleNum * end), additionaData));
 }

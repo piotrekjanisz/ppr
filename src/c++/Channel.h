@@ -34,6 +34,7 @@ private:
     int _pointsBufferId;
     int _vertexLocation;
     int _lightPositionLocation;
+    int _pointSizeLocation;
     int _projectionMatrixLocation;
     int _modelViewMatrixLocation;
     int _vao;

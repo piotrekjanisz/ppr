@@ -5,6 +5,7 @@
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 uniform vec4 lightPosition;
+uniform float pointSize;
 
 in vec4 vertex;
 
@@ -18,7 +19,7 @@ void main(void)
 
 	float len = length(v);
 
-	gl_PointSize = 500.0f / len;
+	gl_PointSize = pointSize / len;
 	
 	gl_Position = projectionMatrix * v;	
 }

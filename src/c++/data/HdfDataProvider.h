@@ -25,6 +25,7 @@ private:
     HdfProcessor _hdfProcessor;
     Step* _step;
     std::vector<Step*> _steps;
+    int _stepsNumber;
 };
 
 #endif	/* HDFDATAPROVIDER_H */

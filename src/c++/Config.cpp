@@ -22,6 +22,7 @@ bool Config::init()
     _frameData.setCameraRotation(transform);
     _frameData.setModelTransformation(_modelTransform);
     _frameData.setLightDirection(vmml::vec4f(-1.0f, -1.0f, -1.0f, 1.0f));
+    _frameData.setPointSize(500.0f);
 
     registerObject(&_frameData);
     _frameData.setAutoObsolete(getLatency());
@@ -89,6 +90,12 @@ bool Config::handleKeyEvent(const eq::KeyEvent& event)
         case 's':
             _cameraFrame.MoveForward(-_speed);
             return true;
+        case '1':
+        	_frameData.changePointSize(-10.0f);
+        	return true;
+        case '2':
+        	_frameData.changePointSize(10.0f);
+        	return true;
     }
     return false;
 }

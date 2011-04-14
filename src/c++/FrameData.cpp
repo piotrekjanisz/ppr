@@ -28,6 +28,7 @@ void FrameData::serialize(eq::net::DataOStream& os,
         os << _lightDirection;
         os << _lightPosition;
         os << _frameNum;
+        os << _pointSize;
     }
 }
 
@@ -42,6 +43,7 @@ void FrameData::deserialize(eq::net::DataIStream& is,
     	is >> _lightDirection;
     	is >> _lightPosition;
     	is >> _frameNum;
+    	is >> _pointSize;
     }
 }
 
