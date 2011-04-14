@@ -10,6 +10,7 @@
 
 #include "H5Cpp.h"
 #include "Step.h"
+#include <boost/shared_ptr.hpp>
 
 class HdfProcessor {
 private:
@@ -53,6 +54,8 @@ public:
 	Step* readStep(int stepNumber, bool withAdditionalData = true) const;
 	Step* readStep(int stepNumber, int begin, int end, bool withAdditionalData = true) const;
 	void updateStep(Step& step);
+
+	boost::shared_ptr<Step> createEmptyStep();
 };
 
 #endif /* HDFPROCESSOR_H_ */

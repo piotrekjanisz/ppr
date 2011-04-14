@@ -10,13 +10,14 @@
 #include "Channel.h"
 #include "glus/Glus.h"
 #include "utils.h"
+#include "ppr.h"
+#include "data/HdfDataProvider.h"
+#include "data/RandomDataProvider.h"
 #include <GL/gl.h>
 #include <iostream>
 #include <eq/eq.h>
 #include <cstring>
-#include "ppr.h"
-#include "data/HdfDataProvider.h"
-#include "data/RandomDataProvider.h"
+#include <boost/shared_ptr.hpp>
 
 const int POS_COMPONENT_NUM = 4;
 
@@ -36,11 +37,7 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent)
         _vertexLocation = _shaderProgram.getAttribLocation("vertex");
         _projectionMatrixLocation = _shaderProgram.getUniformLocation("projectionMatrix");
         _modelViewMatrixLocation = _shaderProgram.getUniformLocation("modelViewMatrix");
-        //_lightDirectionLocation = _shaderProgram.getUniformLocation("lightDirection");
-        //_cameraRotationLocation = _shaderProgram.getUniformLocation("cameraRotation");
         _lightPositionLocation = _shaderProgram.getUniformLocation("lightPosition");
-        //_cameraPositionLocation = _shaderProgram.getUniformLocation("cameraPosition");
-        //_cameraUpLocation = _shaderProgram.getUniformLocation("cameraUp");
     } catch (const ShaderException& ex) {
         std::cout << ex.getErrorMessage() << std::endl;
         exit(1); // TODO implement better exiting
@@ -49,8 +46,6 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent)
 
     Node* node = static_cast<Node*>(getNode());
     _dataProvider = node->getDataProvider();
-    //_dataProvider = new RandomDataProvider(OBJ_NUM, POS_COMPONENT_NUM, X_MIN, X_MAX, Y_MIN, Y_MAX, Z_MIN, Z_MAX);
-    //_dataProvider = new HdfDataProvider("/media/media/studia/hdf/box_rho.h5");
 
     // generate and bind VERTEX ARRAY OBJECT
     glGenVertexArrays(1, (GLuint*) & _vao);
@@ -84,25 +79,15 @@ void Channel::frameDraw(const uint32_t spin)
     Glus::glusMultMatrixf(_modelViewMatrix, _modelViewMatrix, frameData.getCameraTransformation().array);
     Glus::glusMultMatrixf(_modelViewMatrix, _modelViewMatrix, frameData.getModelTransformation().array);
     glUniformMatrix4fv(_modelViewMatrixLocation, 1, GL_FALSE, _modelViewMatrix);
-    //glUniformMatrix4fv(_cameraRotationLocation, 1, GL_FALSE, frameData.getCameraRotation().array);
-    //glUniform4fv(_lightDirectionLocation, 1, frameData.getLightDirection().array);
-    glUniform4fv(_lightPositionLocation, 1, frameData.getLightPosition().array);
-    //glUniform4fv(_cameraPositionLocation, 1, frameData.getCameraPosition().array);
-    //glUniform4fv(_cameraUpLocation, 1, frameData.getCameraUp().array);
+    glUniform4fv(_lightPositionLocation, 1, frameData.getLightPositionInCameraSpace().array);
 
+    boost::shared_ptr<Step> step = _dataProvider->getStep(_frameNum, 0.0, 1.0, true);
     glBindBuffer(GL_ARRAY_BUFFER, _pointsBufferId);
-    glBufferData(GL_ARRAY_BUFFER, _dataProvider->getParticleNum(1.0) * POS_COMPONENT_NUM * sizeof(float), _dataProvider->getPositions(1.0).array, GL_DYNAMIC_DRAW);
-    glDrawArrays(GL_POINTS, 0, _dataProvider->getParticleNum(_frameNum));
-
+    glBufferData(GL_ARRAY_BUFFER, step->getParticlesNumber() * Step::COORDINATES_NUMBER * sizeof(float), step->getCoordinates(), GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_POINTS, 0, step->getParticlesNumber());
     _frameNum += 0.05;
 
-    _frameCount++;
-    _time = _clock.getTimed();
-    if (_time > _measureTime) {
-        std::cout << (_frameCount / _time)*1000 << "fps" << std::endl;
-        _frameCount = 0;
-        _clock.reset();
-    }
+    measureFrameCount();
 }
 
 void Channel::applyFrustum() const

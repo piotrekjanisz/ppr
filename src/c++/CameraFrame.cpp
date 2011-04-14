@@ -6,6 +6,7 @@
  */
 
 #include "CameraFrame.h"
+#include "glus/Glus.h"
 #include <iostream>
 
 using namespace std;
@@ -23,8 +24,8 @@ CameraFrame::~CameraFrame() { }
 
 void CameraFrame::rotateHorizontally(float angle)
 {
-    _forward = _forward.rotate(angle, _up);
-    _forward.normalize();
+	_forward = _forward.rotate(angle, vmml::vec3d(0.0f, 1.0f, 0.0f));
+	_up = _up.rotate(angle, vmml::vec3d(0.0f, 1.0f, 0.0f));
 }
 
 void CameraFrame::rotateVertically(float angle)
@@ -53,30 +54,14 @@ void CameraFrame::translateZ(float value)
 
 vmml::mat4f CameraFrame::getTransform() const
 {
-    vmml::vec3d zAxis = -_forward;
-    vmml::vec3d cross = _up.cross(_forward);
-    vmml::vec3d xAxis = _up.cross(zAxis);
-    vmml::mat4f transform = vmml::mat4f::ZERO;
+    vmml::mat4f retVal;
+    vmml::vec3f center = _position + _up;
 
-    transform[0][0] = xAxis.x();
-    transform[1][0] = xAxis.y();
-    transform[2][0] = xAxis.z();
+    Glus::glusLookAtf(retVal.array, _position.x(), _position.y(), _position.z(),
+    		center.x(), center.y(), center.z(),
+    		_up.x(), _up.y(), _up.z());
 
-    transform[0][1] = _up.x();
-    transform[1][1] = _up.y();
-    transform[2][1] = _up.z();
-
-    transform[0][2] = zAxis.x();
-    transform[1][2] = zAxis.y();
-    transform[2][2] = zAxis.z();
-
-    transform[0][3] = _position.x();
-    transform[1][3] = _position.y();
-    transform[2][3] = _position.z();
-
-    transform[3][3] = 1.0f;
-
-    return transform;
+    return retVal;
 }
 
 

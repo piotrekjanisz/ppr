@@ -33,13 +33,9 @@ private:
 
     int _pointsBufferId;
     int _vertexLocation;
-    int _lightDirectionLocation;
     int _lightPositionLocation;
-    int _cameraRotationLocation;
     int _projectionMatrixLocation;
     int _modelViewMatrixLocation;
-    int _cameraPositionLocation;
-    int _cameraUpLocation;
     int _vao;
     int _instanceDataUBO;
 
@@ -62,12 +58,27 @@ private:
     eq::base::Clock _clock;
 
     double _frameNum;
+
+    inline void measureFrameCount();
+
+
 protected:
     void frameDraw(const uint32_t spin);
     void applyFrustum() const;
 
     const FrameData& getFrameData() const;
 };
+
+inline void Channel::measureFrameCount()
+{
+	_frameCount++;
+	_time = _clock.getTimed();
+	if (_time > _measureTime) {
+		std::cout << (_frameCount / _time)*1000 << "fps" << std::endl;
+		_frameCount = 0;
+		_clock.reset();
+	}
+}
 
 #endif	/* CHANNEL_H */
 

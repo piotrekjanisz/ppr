@@ -15,7 +15,7 @@ namespace ppr {
 
 enum LogTopics
 {
-  	LOG_GENERAL = eq::LOG_CUSTOM << 0
+  	LOG_GENERAL = eq::LOG_CUSTOM << 0,
 };
 
 typedef vmml::matrix<4, 4, float> Matrix4f;

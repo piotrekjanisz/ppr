@@ -7,6 +7,7 @@
 
 #include "RandomDataProvider.h"
 #include "../utils.h"
+#include <boost/make_shared.hpp>
 
 RandomDataProvider::RandomDataProvider(int particleNum, int numComponents, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax)
 : _particleNum(particleNum)
@@ -21,6 +22,10 @@ RandomDataProvider::RandomDataProvider(int particleNum, int numComponents, float
             _data.array[i * numComponents + j] = 1.0f;
         }
     }
+
+    _step = boost::make_shared<Step>();
+    _step->setCoordinates(_data.array);
+    _step->setParticlesNumber(_particleNum);
 }
 
 Array<float> RandomDataProvider::getPositions(double frameNum)
@@ -33,9 +38,9 @@ int RandomDataProvider::getParticleNum(double frameNum)
 	return _particleNum;
 }
 
-Step* RandomDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
+boost::shared_ptr<Step> RandomDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
 {
-	return 0;
+	return _step;
 }
 
 

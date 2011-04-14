@@ -84,12 +84,12 @@ public:
     	return _modelTransformation;
     }
 
-    vmml::vec4f getLightDirection() const
+    vmml::vec4f getLightDirectionInCameraSpace() const
     {
     	return _cameraRotation * _lightDirection;
     }
 
-    vmml::vec4f getLightPosition() const
+    vmml::vec4f getLightPositionInCameraSpace() const
     {
     	return _cameraTransformation * _lightPosition;
     }

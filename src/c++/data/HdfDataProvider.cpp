@@ -8,6 +8,7 @@
 #include "HdfDataProvider.h"
 #include <cmath>
 #include <iostream>
+#include <boost/shared_ptr.hpp>
 
 using namespace std;
 
@@ -27,10 +28,11 @@ Array<float> HdfDataProvider::getPositions(double frameNum)
     return Array<float>(_steps[stepNumber]->getCoordinates(), _steps[stepNumber]->getParticlesNumber());
 }
 
-Step* HdfDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
+boost::shared_ptr<Step> HdfDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
 {
-	return _steps[floor(frameNum)];
-	// TODO
+	int frameNumInt = floor(frameNum);
+	int particleNum = _hdfProcessor.readParticlesNumber(frameNumInt);
+	return boost::shared_ptr<Step>(_hdfProcessor.readStep(frameNumInt, floor(particleNum * begin), floor(particleNum * end), additionaData));
 }
 
 int HdfDataProvider::getParticleNum(double frameNum)

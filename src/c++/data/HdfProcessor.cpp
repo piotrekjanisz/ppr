@@ -6,6 +6,7 @@
  */
 
 #include "HdfProcessor.h"
+#include <boost/make_shared.hpp>
 #include <iostream>
 #include <cstdio>
 #include <map>
@@ -183,4 +184,21 @@ Step *HdfProcessor::readStep(int stepNumber, int begin, int end,
 	delete[] stepName;
 
 	return result;
+}
+
+boost::shared_ptr<Step> HdfProcessor::createEmptyStep()
+{
+	boost::shared_ptr<Step> retVal = boost::make_shared<Step>();
+
+	int stepsNumber = getStepsNumber();
+	int biggestStep = 0;
+	for (int i = 0; i < stepsNumber; i++) {
+		biggestStep = std::max(biggestStep, readParticlesNumber(i));
+	}
+
+	float* coordinates = new float[biggestStep * Step::DIMENSION_NUMBER];
+	retVal->setCoordinates(coordinates);
+	retVal->setParticlesNumber(biggestStep);
+
+	return retVal;
 }

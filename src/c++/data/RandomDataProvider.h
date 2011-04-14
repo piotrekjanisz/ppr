@@ -9,18 +9,22 @@
 #define	RANDOMDATAPROVIDER_H
 
 #include "DataProvider.h"
+#include "Step.h"
+#include <boost/shared_ptr.hpp>
 
 class RandomDataProvider : public DataProvider
 {
     int _particleNum;
     Array<float> _data;
+    boost::shared_ptr<Step> _step;
+
 public:
     RandomDataProvider(int particleNum, int numComponents, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
     virtual ~RandomDataProvider() {}
 
     Array<float> getPositions(double frameNum);
     virtual int getParticleNum(double frameNum);
-    virtual Step* getStep(double frameNum, double begin, double end, bool additionaData = true);
+    virtual boost::shared_ptr<Step> getStep(double frameNum, double begin, double end, bool additionaData = true);
 };
 
 #endif	/* RANDOMDATAPROVIDER_H */
