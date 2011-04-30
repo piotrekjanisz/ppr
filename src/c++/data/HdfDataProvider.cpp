@@ -19,7 +19,7 @@ HdfDataProvider::HdfDataProvider(const char* hdfFilePath)
     _steps.reserve(_stepsNumber);
     cout << "STEP NUM: " << _hdfProcessor.getStepsNumber() << endl;
     for (int i = 0; i < _hdfProcessor.getStepsNumber(); i++) {
-        _steps.push_back(_hdfProcessor.readStep(i));
+        _steps.push_back(boost::shared_ptr<Step>(_hdfProcessor.readStep(i)));
     }
 }
 
