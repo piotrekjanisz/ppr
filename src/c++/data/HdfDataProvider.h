@@ -23,8 +23,7 @@ public:
     virtual int getParticleNum(double frameNum);
 private:
     HdfProcessor _hdfProcessor;
-    Step* _step;
-    std::vector<Step*> _steps;
+    std::vector<boost::shared_ptr<Step> > _steps;
     int _stepsNumber;
 };
 
