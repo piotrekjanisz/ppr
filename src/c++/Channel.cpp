@@ -55,7 +55,7 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent)
     // initialize VBO for vertex data
     glGenBuffers(1, (GLuint*) & _pointsBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, _pointsBufferId);
-    glBufferData(GL_ARRAY_BUFFER, _dataProvider->getParticleNum(1.0) * POS_COMPONENT_NUM * sizeof(float), _dataProvider->getPositions(1.0).array, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, _dataProvider->getParticleNum(1.0) * POS_COMPONENT_NUM * sizeof(float), 0, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(_vertexLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(_vertexLocation);
 
@@ -83,7 +83,9 @@ void Channel::frameDraw(const uint32_t spin)
     glUniform4fv(_lightPositionLocation, 1, frameData.getLightPositionInCameraSpace().array);
     glUniform1f(_pointSizeLocation, frameData.getPointSize());
 
-    boost::shared_ptr<Step> step = _dataProvider->getStep(_frameNum, 0.0, 1.0, true);
+    eq::Range range = getRange();
+
+    boost::shared_ptr<Step> step = _dataProvider->getStep(_frameNum, range.start, range.end, true);
     glBindBuffer(GL_ARRAY_BUFFER, _pointsBufferId);
     glBufferData(GL_ARRAY_BUFFER, step->getParticlesNumber() * Step::COORDINATES_NUMBER * sizeof(float), step->getCoordinates(), GL_DYNAMIC_DRAW);
     glDrawArrays(GL_POINTS, 0, step->getParticlesNumber());

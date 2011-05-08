@@ -13,11 +13,12 @@ InitData::~InitData() { }
 
 void InitData::getInstanceData(eq::net::DataOStream& os)
 {
-    os << _frameDataId << _hdfFile;
+    os << _frameDataId << _hdfFile << _sphereNum;
 }
 
 void InitData::applyInstanceData(eq::net::DataIStream& is)
 {
     is >> _frameDataId;
     is >> _hdfFile;
+    is >> _sphereNum;
 }

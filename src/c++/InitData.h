@@ -25,9 +25,13 @@ public:
     std::string getHdfFile() { return _hdfFile; }
     void setHdfFile(const std::string& hdfFile) { _hdfFile = hdfFile; }
 
+    uint32_t getSphereNum() const { return _sphereNum; }
+    void setSphereNum(uint32_t sphereNum) { _sphereNum = sphereNum; }
+
 private:
     uint32_t _frameDataId;
     std::string _hdfFile;
+    uint32_t _sphereNum;
 };
 
 #endif	/* INITDATA_H */

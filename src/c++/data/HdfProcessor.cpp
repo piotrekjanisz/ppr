@@ -171,6 +171,11 @@ Step *HdfProcessor::readStep(int stepNumber, int begin, int end,
 	for (int i = 0; i < Step::DIMENSION_NUMBER; i++) {
 		readCoordinatesFromDataSet(group, pointsNumber, i, begin, coordinates);
 	}
+	for (int i = Step::DIMENSION_NUMBER; i < Step::COORDINATES_NUMBER; i++) {
+		for (int j = 0; j < pointsNumber; j++) {
+			coordinates[Step::COORDINATES_NUMBER * j + i] = 1.0f;
+		}
+	}
 
 	Step* result = new Step(stepName, pointsNumber, coordinates);
 

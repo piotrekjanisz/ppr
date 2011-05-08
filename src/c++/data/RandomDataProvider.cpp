@@ -28,11 +28,6 @@ RandomDataProvider::RandomDataProvider(int particleNum, int numComponents, float
     _step->setParticlesNumber(_particleNum);
 }
 
-Array<float> RandomDataProvider::getPositions(double frameNum)
-{
-    return _data;
-}
-
 int RandomDataProvider::getParticleNum(double frameNum)
 {
 	return _particleNum;

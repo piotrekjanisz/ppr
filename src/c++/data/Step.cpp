@@ -126,7 +126,7 @@ ostream& operator<<(ostream & stream, const Step & step) {
 			<< step._particlesNumber << endl;
 
 	stream << "Coordinates: ";
-	printArray(stream, step._coordinates, step._particlesNumber
+	printArray(stream, step._coordinates, 10
 			* (Step::COORDINATES_NUMBER));
 
 	stream << "Additional data: " << endl;

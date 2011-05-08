@@ -25,7 +25,6 @@ bool Node::configInit(const uint32_t initID)
 
     InitData initData = config->getInitData();
 
-    const int OBJ_NUM = 100000;
     const int POS_COMPONENT_NUM = 4;
     const float X_MIN = -20.0f;
     const float X_MAX = 20.0f;
@@ -34,7 +33,7 @@ bool Node::configInit(const uint32_t initID)
     const float Z_MIN = 1.0f;
     const float Z_MAX = 40.0f;
     if (initData.getHdfFile().empty()) {
-    	_dataProvider = boost::make_shared<RandomDataProvider>(OBJ_NUM, POS_COMPONENT_NUM, X_MIN, X_MAX, Y_MIN, Y_MAX, Z_MIN, Z_MAX);
+    	_dataProvider = boost::make_shared<RandomDataProvider>(initData.getSphereNum(), POS_COMPONENT_NUM, X_MIN, X_MAX, Y_MIN, Y_MAX, Z_MIN, Z_MAX);
     } else {
     	_dataProvider = boost::make_shared<HdfDataProvider>(initData.getHdfFile().c_str());
     }

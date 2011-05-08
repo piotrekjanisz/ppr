@@ -18,13 +18,10 @@ class HdfDataProvider : public DataProvider
 public:
     HdfDataProvider(const char* hdfFilePath);
     ~HdfDataProvider();
-    virtual Array<float> getPositions(double frameNum);
     virtual boost::shared_ptr<Step> getStep(double frameNum, double begin, double end, bool additionaData = true);
     virtual int getParticleNum(double frameNum);
 private:
     HdfProcessor _hdfProcessor;
-    Step* _step;
-    std::vector<boost::shared_ptr<Step> > _steps;
     int _stepsNumber;
 };
 

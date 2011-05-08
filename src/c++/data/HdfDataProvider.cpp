@@ -16,17 +16,6 @@ HdfDataProvider::HdfDataProvider(const char* hdfFilePath)
     : _hdfProcessor(hdfFilePath)
 {
 	_stepsNumber = _hdfProcessor.getStepsNumber();
-    _steps.reserve(_stepsNumber);
-    cout << "STEP NUM: " << _hdfProcessor.getStepsNumber() << endl;
-    for (int i = 0; i < _hdfProcessor.getStepsNumber(); i++) {
-        _steps.push_back(boost::shared_ptr<Step>(_hdfProcessor.readStep(i)));
-    }
-}
-
-Array<float> HdfDataProvider::getPositions(double frameNum)
-{
-    int stepNumber = floor(fmod(frameNum, _steps.size()));
-    return Array<float>(_steps[stepNumber]->getCoordinates(), _steps[stepNumber]->getParticlesNumber());
 }
 
 boost::shared_ptr<Step> HdfDataProvider::getStep(double frameNum, double begin, double end, bool additionaData)
@@ -34,13 +23,17 @@ boost::shared_ptr<Step> HdfDataProvider::getStep(double frameNum, double begin, 
 	int frameNumInt = floor(frameNum);
 	frameNumInt = frameNumInt % _stepsNumber;
 	int particleNum = _hdfProcessor.readParticlesNumber(frameNumInt);
-	return boost::shared_ptr<Step>(_hdfProcessor.readStep(frameNumInt, floor(particleNum * begin), floor(particleNum * end), additionaData));
+	int firstParticle = floor(particleNum * begin);
+	int lastParticle = floor(particleNum * end);
+	boost::shared_ptr<Step> retVal(_hdfProcessor.readStep(frameNumInt, firstParticle, lastParticle, additionaData));
+
+	return retVal;
 }
 
 int HdfDataProvider::getParticleNum(double frameNum)
 {
-	int stepNumber = floor(fmod(frameNum, _steps.size()));
-	return _steps[stepNumber]->getParticlesNumber();
+	int stepNumber = floor(fmod(frameNum, _stepsNumber));
+	return _hdfProcessor.readParticlesNumber(stepNumber);
 }
 
 HdfDataProvider::~HdfDataProvider() { }

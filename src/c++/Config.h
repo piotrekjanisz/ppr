@@ -33,6 +33,7 @@ public:
     virtual ~Config();
 
     void setHdfFileName(const std::string& fileName) { _initData.setHdfFile(fileName); }
+    void setSphereNum(uint32_t sphereNum) { _initData.setSphereNum(sphereNum); }
 private:
     FrameData _frameData;
     GLFrame _cameraFrame;
