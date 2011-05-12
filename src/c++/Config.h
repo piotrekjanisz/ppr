@@ -10,7 +10,6 @@
 
 #include <eq/eq.h>
 #include "FrameData.h"
-#include "CameraFrame.h"
 #include "InitData.h"
 #include "GLFrame.h"
 
@@ -34,6 +33,8 @@ public:
 
     void setHdfFileName(const std::string& fileName) { _initData.setHdfFile(fileName); }
     void setSphereNum(uint32_t sphereNum) { _initData.setSphereNum(sphereNum); }
+
+    void setInitData(const InitData& initData) { _initData = initData; }
 private:
     FrameData _frameData;
     GLFrame _cameraFrame;

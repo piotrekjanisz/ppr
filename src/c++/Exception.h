@@ -40,6 +40,5 @@ public:
 
 #define THROW(exception, message) throw (exception(message, __FILE__, __LINE__))
 
-
 #endif	/* EXCEPTION_H */
 

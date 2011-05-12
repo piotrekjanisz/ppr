@@ -5,7 +5,8 @@
 #include "Config.h"
 #include "Pipe.h"
 #include "Node.h"
-#include "CommandLineParser.h"
+#include "LocalInitData.h"
+#include "MyWindow.h"
 
 using namespace eq::base;
 using namespace std;
@@ -33,9 +34,13 @@ public:
     {
         return new Node(parent);
     }
-};
 
-const int DEF_SPHERE_NUM = 100000;
+    virtual eq::Window*  createWindow( eq::Pipe* parent )
+    {
+    	return new MyWindow( parent );
+    }
+
+};
 
 int main(const int argc, char** argv)
 {
@@ -51,22 +56,9 @@ int main(const int argc, char** argv)
     Config* config = static_cast<Config*> (eq::getConfig(argc, argv));
     if (config) {
 
-    	CommandLineParser parser;
-        const char* hdfFile = parser.findArg(argc, argv, "-hdfFile");
-        if (hdfFile) {
-        	cout << "HAVE HDF FILE: " << hdfFile << endl;
-        	config->setHdfFileName(hdfFile);
-        } else {
-        	cout << "HDF FILE NOT SPECIFIED" << endl;
-        	config->setHdfFileName("");
-        }
-
-        const char* sphereNumStr = parser.findArg(argc, argv, "-sphereNum");
-        if (sphereNumStr) {
-        	config->setSphereNum(atoi(sphereNumStr));
-        } else {
-        	config->setSphereNum(DEF_SPHERE_NUM);
-        }
+    	LocalInitData localInitData;
+    	localInitData.processCommandLine(argv);
+    	config->setInitData(localInitData);
 
         if (config->init()) {
             while (config->isRunning()) {

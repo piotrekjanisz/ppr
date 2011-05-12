@@ -24,9 +24,8 @@ const int POS_COMPONENT_NUM = 4;
 Channel::Channel(eq::Window* parent) : eq::Channel(parent)
 {
     _frameNum = 0.0;
-    _measureTime = 5000.0;
+    _updateFpsTime = 5000.0;
     _clock.reset();
-    _frameCount = 0;
 
     _yRotation = 180;
     _zTranslation = -20;
@@ -40,8 +39,8 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent)
         _lightPositionLocation = _shaderProgram.getUniformLocation("lightPosition");
         _pointSizeLocation = _shaderProgram.getUniformLocation("pointSize");
     } catch (const ShaderException& ex) {
-        std::cout << ex.getErrorMessage() << std::endl;
-        exit(1); // TODO implement better exiting
+        EQERROR << ex.getErrorMessage() << std::endl;
+        exit(EXIT_FAILURE); // TODO implement better exiting
     }
     _shaderProgram.useThis();
 
@@ -91,7 +90,7 @@ void Channel::frameDraw(const uint32_t spin)
     glDrawArrays(GL_POINTS, 0, step->getParticlesNumber());
     _frameNum += 0.05;
 
-    measureFrameCount();
+    displayFrameRate();
 }
 
 void Channel::applyFrustum() const

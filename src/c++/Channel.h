@@ -11,7 +11,6 @@
 #include <eq/eq.h>
 #include <boost/shared_ptr.hpp>
 #include "glus/Glus.h"
-#include "CameraFrame.h"
 #include "ShaderProgram.h"
 #include "FrameData.h"
 #include "data/DataProvider.h"
@@ -52,15 +51,13 @@ private:
     float _yRotation;
     float _zTranslation;
 
-    int _frameCount;
-    double _prevTime;
     double _time;
-    double _measureTime;
+    double _updateFpsTime;
     eq::base::Clock _clock;
 
     double _frameNum;
 
-    inline void measureFrameCount();
+    inline void displayFrameRate();
 
 
 protected:
@@ -70,14 +67,12 @@ protected:
     const FrameData& getFrameData() const;
 };
 
-inline void Channel::measureFrameCount()
+inline void Channel::displayFrameRate()
 {
-	_frameCount++;
 	_time = _clock.getTimed();
-	if (_time > _measureTime) {
-		std::cout << (_frameCount / _time)*1000 << "fps" << std::endl;
-		_frameCount = 0;
+	if (_time > _updateFpsTime) {
 		_clock.reset();
+		std::cout << getWindow()->getFPS() << "fps" << std::endl;
 	}
 }
 
