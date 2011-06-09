@@ -26,9 +26,9 @@ public:
         return _initData;
     }
 
-    void mapData(const uint32_t initDataID);
+    void mapData(const eq::uint128_t& initDataID);
 
-    Config(eq::base::RefPtr< eq::Server > parent);
+    Config(co::base::RefPtr< eq::Server > parent);
     virtual ~Config();
 
     void setHdfFileName(const std::string& fileName) { _initData.setHdfFile(fileName); }

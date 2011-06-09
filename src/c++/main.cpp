@@ -8,7 +8,6 @@
 #include "LocalInitData.h"
 #include "MyWindow.h"
 
-using namespace eq::base;
 using namespace std;
 
 class NodeFactory : public eq::NodeFactory
@@ -68,8 +67,7 @@ int main(const int argc, char** argv)
 
             config->exit();
         } else {
-            EQERROR << "Config initialization failed: "
-                    << config->getErrorMessage() << endl;
+            EQERROR << "Config initialization failed: " << endl;
             error = true;
         }
 

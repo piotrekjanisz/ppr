@@ -10,17 +10,17 @@
 
 #include <eq/eq.h>
 
-class InitData : public eq::net::Object
+class InitData : public co::Object
 {
 public:
     InitData();
     virtual ~InitData();
 
-    virtual void getInstanceData(eq::net::DataOStream& os);
-    virtual void applyInstanceData(eq::net::DataIStream& is);
+    virtual void getInstanceData(co::DataOStream& os);
+    virtual void applyInstanceData(co::DataIStream& is);
 
-    uint32_t getFrameDataId() const { return _frameDataId; }
-    void setFrameDataId(uint32_t frameDataId) { _frameDataId = frameDataId; }
+    eq::uint128_t getFrameDataId() const { return _frameDataId; }
+    void setFrameDataId(const eq::uint128_t& frameDataId) { _frameDataId = frameDataId; }
 
     std::string getHdfFile() { return _hdfFile; }
     void setHdfFile(const std::string& hdfFile) { _hdfFile = hdfFile; }
@@ -29,7 +29,7 @@ public:
     void setSphereNum(uint32_t sphereNum) { _sphereNum = sphereNum; }
 
 private:
-    uint32_t _frameDataId;
+    eq::uint128_t _frameDataId;
     std::string _hdfFile;
     uint32_t _sphereNum;
 };

@@ -19,8 +19,8 @@ public:
     Pipe(eq::Node* parent);
     virtual ~Pipe();
 
-    virtual bool configInit( const uint32_t initID );
-    virtual void frameStart( const uint32_t frameID, const uint32_t frameNumber );
+    virtual bool configInit( const eq::uint128_t& initID );
+    virtual void frameStart( const eq::uint128_t& frameID, const uint32_t frameNumber );
 
     const FrameData& getFrameData() const { return _frameData; }
     const DataProvider* getDataProvider() const { return _dataProvider; }

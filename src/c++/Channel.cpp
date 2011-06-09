@@ -69,7 +69,7 @@ Channel::Channel(eq::Window* parent) : eq::Channel(parent)
 
 Channel::~Channel() { }
 
-void Channel::frameDraw(const uint32_t spin)
+void Channel::frameDraw(const eq::uint128_t& spin)
 {
     FrameData frameData = getFrameData();
     eq::Channel::frameDraw(spin);

@@ -8,7 +8,7 @@
 #include "Config.h"
 #include <iostream>
 
-Config::Config(eq::base::RefPtr< eq::Server > parent)
+Config::Config(co::base::RefPtr< eq::Server > parent)
 : eq::Config(parent), _modelTransform(vmml::mat4f::IDENTITY), _speed(0.2f) { }
 
 Config::~Config() { }
@@ -44,7 +44,7 @@ uint32_t Config::startFrame()
     _cameraFrame.GetCameraMatrix(transform, true);
     _frameData.setCameraRotation(transform);
     _frameData.setModelTransformation(_modelTransform);
-    const uint32_t version = _frameData.commit();
+    const eq::uint128_t version = _frameData.commit();
     return eq::Config::startFrame(version);
 }
 
@@ -55,7 +55,7 @@ bool Config::handleEvent(const eq::ConfigEvent* event)
             if (handleKeyEvent(event->data.keyPress))
                 return true;
             break;
-        case eq::Event::POINTER_MOTION:
+        case eq::Event::CHANNEL_POINTER_MOTION:
             if (event->data.pointerMotion.buttons == eq::PTR_BUTTON1) {
                 _cameraFrame.RotateLocalY(-0.005f * event->data.pointerMotion.dx);
                 _cameraFrame.RotateLocalX(-0.005f * event->data.pointerMotion.dy);
@@ -100,9 +100,10 @@ bool Config::handleKeyEvent(const eq::KeyEvent& event)
     return false;
 }
 
-void Config::mapData(const uint32_t initDataID)
+void Config::mapData(const eq::uint128_t& initDataID)
 {
-    if( _initData.getID() == EQ_ID_INVALID ) {
+	if (! _initData.isAttached()) {
+    //if( _initData.getID() == EQ_ID_INVALID ) {
         EQCHECK( mapObject( &_initData, initDataID ));
         unmapObject( &_initData ); // data was retrieved, unmap immediately
     } else { // appNode, _initData is registered already

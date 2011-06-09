@@ -7,16 +7,16 @@
 
 #include "InitData.h"
 
-InitData::InitData() : _frameDataId(EQ_ID_INVALID) { }
+InitData::InitData() : _frameDataId(co::base::UUID::ZERO) { }
 
 InitData::~InitData() { }
 
-void InitData::getInstanceData(eq::net::DataOStream& os)
+void InitData::getInstanceData(co::DataOStream& os)
 {
     os << _frameDataId << _hdfFile << _sphereNum;
 }
 
-void InitData::applyInstanceData(eq::net::DataIStream& is)
+void InitData::applyInstanceData(co::DataIStream& is)
 {
     is >> _frameDataId;
     is >> _hdfFile;

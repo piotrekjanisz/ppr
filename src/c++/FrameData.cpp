@@ -17,10 +17,10 @@ FrameData::FrameData()
 
 FrameData::~FrameData() { }
 
-void FrameData::serialize(eq::net::DataOStream& os,
+void FrameData::serialize(co::DataOStream& os,
         const uint64_t dirtyBits)
 {
-    eq::Object::serialize(os, dirtyBits);
+    eq::fabric::Serializable::serialize(os, dirtyBits);
     if (dirtyBits & DIRTY_ALL_PARAMS) {
         os << _cameraTransformation;
         os << _cameraRotation;
@@ -32,10 +32,10 @@ void FrameData::serialize(eq::net::DataOStream& os,
     }
 }
 
-void FrameData::deserialize(eq::net::DataIStream& is,
+void FrameData::deserialize(co::DataIStream& is,
         const uint64_t dirtyBits)
 {
-    eq::Object::deserialize(is, dirtyBits);
+    eq::fabric::Serializable::deserialize(is, dirtyBits);
     if (dirtyBits & DIRTY_ALL_PARAMS) {
     	is >> _cameraTransformation;
     	is >> _cameraRotation;

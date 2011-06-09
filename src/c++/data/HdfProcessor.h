@@ -11,6 +11,7 @@
 #include "H5Cpp.h"
 #include "Step.h"
 #include <boost/shared_ptr.hpp>
+#include <vector>
 
 class HdfProcessor {
 private:
@@ -18,6 +19,7 @@ private:
 
 	H5::H5File _file;
 	int _stepsNumber;
+	std::vector<int> _stepsNumbers;
 
 	int getPointsNumber(const H5::Group& group) const;
 	float* readDataSet(const H5::Group & group, const char *dataSetName,
@@ -39,6 +41,7 @@ private:
 			H5::Group& group) const;
 	std::map<std::string, float*> readAdditionalData(H5::Group & group,
 			int pointsNumber, int offset) const;
+	void readStepsNumbers();
 
 public:
 
@@ -54,6 +57,7 @@ public:
 	Step* readStep(int stepNumber, bool withAdditionalData = true) const;
 	Step* readStep(int stepNumber, int begin, int end, bool withAdditionalData = true) const;
 	void updateStep(Step& step);
+	std::vector<int>& getStepsNumbers();
 
 	boost::shared_ptr<Step> createEmptyStep();
 };

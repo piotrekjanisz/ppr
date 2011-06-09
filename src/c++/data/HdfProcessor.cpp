@@ -191,6 +191,30 @@ Step *HdfProcessor::readStep(int stepNumber, int begin, int end,
 	return result;
 }
 
+vector<int>& HdfProcessor::getStepsNumbers() {
+	if (_stepsNumbers.size() != _stepsNumber) {
+		readStepsNumbers();
+	}
+
+	return _stepsNumbers;
+}
+
+herr_t readDatasetName(hid_t groupId, const char* dataSetName,
+		void* data) {
+	vector<int>* stepsNumbers = (vector<int>*) data;
+
+	int stepNumber;
+	sscanf(dataSetName, HdfProcessor::STEP_NAME_TEMPLATE, &stepNumber);
+	stepsNumbers->push_back(stepNumber);
+
+	return 0;
+}
+
+void HdfProcessor::readStepsNumbers() {
+	_file.iterateElems(CURRENT_PATH, NULL, readDatasetName, &_stepsNumbers);
+	sort(_stepsNumbers.begin(), _stepsNumbers.end());
+}
+
 boost::shared_ptr<Step> HdfProcessor::createEmptyStep()
 {
 	boost::shared_ptr<Step> retVal = boost::make_shared<Step>();

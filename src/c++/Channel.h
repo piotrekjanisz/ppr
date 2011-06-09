@@ -53,7 +53,7 @@ private:
 
     double _time;
     double _updateFpsTime;
-    eq::base::Clock _clock;
+    co::base::Clock _clock;
 
     double _frameNum;
 
@@ -61,7 +61,7 @@ private:
 
 
 protected:
-    void frameDraw(const uint32_t spin);
+    void frameDraw(const eq::uint128_t& spin);
     void applyFrustum() const;
 
     const FrameData& getFrameData() const;

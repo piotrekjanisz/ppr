@@ -14,7 +14,7 @@
 #include <cstring>
 #include <iostream>
 
-class FrameData : public eq::Object
+class FrameData : public eq::fabric::Serializable
 {
 public:
 	FrameData();
@@ -109,15 +109,15 @@ public:
     float getPointSize() { return _pointSize; }
 
 protected:
-    virtual void serialize(eq::net::DataOStream& os,
+    virtual void serialize(co::DataOStream& os,
                            const uint64_t dirtyBits);
 
-    virtual void deserialize(eq::net::DataIStream& is,
+    virtual void deserialize(co::DataIStream& is,
                              const uint64_t dirtyBits);
 
     enum DirtyBits
     {
-    	DIRTY_ALL_PARAMS = eq::Object::DIRTY_CUSTOM << 0
+    	DIRTY_ALL_PARAMS = eq::fabric::Serializable::DIRTY_CUSTOM << 0
     };
 
 private:
